@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova IDs | Elite Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        
+        /* ADJUSTED ZOOM & SPACING */
+        body { background: #f4f4f7; color: #1a1a1a; font-family: 'Plus Jakarta Sans', sans-serif; padding-top: 160px; overflow-x: hidden; }
+        
+        /* SPECTRUM BACKGROUND CANVAS */
+        #spectrum-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; filter: blur(40px); opacity: 0.35; }
+        
+        /* HEADER - COMPACT LOOK */
+        .fixed-top { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); border-bottom: 1px solid #ddd; }
+        .nav-h { height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .search-h { height: 60px; border-top: 1px solid #eee; display: flex; padding: 0 20px; align-items: center; gap: 10px; }
+
+        /* ELITE CARDS WITH RAINBOW BASS PARTICLES */
+        .elite-card {
+            background: linear-gradient(145deg, #000, #1a1a1a);
+            border-radius: 28px; padding: 25px; position: relative; overflow: hidden;
+            border: 2px solid #facc15; transition: 0.1s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        /* RAINBOW GLOW ELEMENT */
+        .rainbow-glow {
+            position: absolute; inset: 0; border-radius: 28px;
+            opacity: 0; transition: 0.1s; pointer-events: none;
+            box-shadow: 0 0 20px 5px currentColor;
+        }
+
+        .glow-layer {
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 180deg at 50% 50%, transparent 0%, #facc15 25%, transparent 50%);
+            animation: rotateGlow 4s linear infinite; opacity: 0.1;
+        }
+        @keyframes rotateGlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* PROGRESS BAR */
+        .bar-container { background: rgba(255,255,255,0.1); height: 8px; border-radius: 20px; margin: 12px 0; overflow: hidden; }
+        .bar-fill { background: #facc15; height: 100%; width: 70%; transition: 1.5s; box-shadow: 0 0 10px #facc15; }
+
+        /* ID CARDS - SMALLER FOR BETTER VIEW */
+        .id-card { background: #fff; border: 1px solid #eee; border-radius: 25px; overflow: hidden; transition: 0.3s; }
+        .id-card:hover { border-color: #facc15; transform: translateY(-5px); }
+
+        .cat-btn { padding: 8px 16px; border-radius: 12px; font-size: 10px; font-weight: 800; background: #eee; transition: 0.3s; white-space: nowrap; }
+        .cat-btn.active { background: #000; color: #fff; }
+
+        /* MAILBOX */
+        .mail-btn { background: #f0f0f0; padding: 8px; border-radius: 12px; border: 1px solid #ddd; transition: 0.3s; }
+        .notification-dot {
+            position: absolute; top: -2px; right: -2px; width: 10px; height: 10px;
+            background: #ff3b3b; border: 2px solid #fff; border-radius: 50%;
+            display: none; animation: pulse-red 1.5s infinite;
+        }
+        @keyframes pulse-red { 0% { transform: scale(0.9); } 70% { transform: scale(1.1); box-shadow: 0 0 10px rgba(255, 59, 59, 0.5); } 100% { transform: scale(0.9); } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body onclick="startExperience()">
+
+    <canvas id="spectrum-canvas"></canvas>
+
+    <div class="fixed-top">
+        <div class="nav-h">
+            <h1 style="font-family: 'Orbitron';" class="text-lg font-black italic">Nova<span class="text-yellow-500">IDs</span></h1>
+            <div class="flex items-center gap-3">
+                <div class="bg-yellow-500/10 px-3 py-1.5 rounded-xl text-yellow-600 font-black text-[10px] border border-yellow-500/20"><span id="bal">0.00</span> NC</div>
+                
+                <div class="mail-wrapper" onclick="window.location.href='mailbox.html'">
+                    <div class="mail-btn"><img src="https://cdn-icons-png.flaticon.com/512/542/542689.png" class="w-4 opacity-70"></div>
+                    <div id="mailDot" class="notification-dot"></div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div id="pfp" onclick="window.location.href='account-info.html'" class="w-9 h-9 bg-black text-white rounded-xl flex items-center justify-center font-black text-xs cursor-pointer hover:scale-110 transition-all border border-white/20 shadow-lg">
+    H
+</div>
+                    <button id="speakerBtn" class="p-2 bg-gray-100 rounded-xl">
+                        <img id="speakerIcon" src="https://cdn-icons-png.flaticon.com/512/727/727269.png" class="w-4 opacity-40">
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-h overflow-x-auto no-scrollbar">
+            <input type="text" placeholder="Search..." class="min-w-[150px] bg-gray-50 border-none rounded-xl py-2 px-4 text-xs outline-none focus:ring-1 ring-yellow-500">
+            <button class="cat-btn active" onclick="filterType('all', this)">🌐 ALL</button>
+            <button class="cat-btn" onclick="filterType('1nc', this)">🎲 1NC GAME</button>
+            <button class="cat-btn" onclick="filterType('tourney', this)">🏆 TOURNEY</button>
+        </div>
+    </div>
+
+    <main class="p-4 max-w-6xl mx-auto z-10 relative">
+
+        <section id="lottery-box" class="mb-10">
+            <div class="elite-card" id="lotCard">
+                <div class="rainbow-glow"></div>
+                <div class="glow-layer"></div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div>
+                        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-[9px] font-black uppercase">Jackpot</span>
+                        <h3 class="text-3xl font-black text-white mt-2 italic uppercase leading-none">5000 DIAMONDS</h3>
+                        <p class="text-gray-400 text-[10px] mt-2 font-bold">Ends: <span class="text-yellow-500" id="timer">04:22:10</span></p>
+                        <button class="mt-6 bg-white text-black px-8 py-3 rounded-xl font-black text-[10px] uppercase">Join 1 NC</button>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl min-w-[200px]">
+                        <p class="text-[9px] text-yellow-500 font-black uppercase mb-2">Winners</p>
+                        <div class="space-y-2 text-white text-[10px] font-bold">
+                            <div class="flex justify-between"><span>@zain_core</span><span class="opacity-40">1m</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tourney-box" class="mb-10">
+            <div class="elite-card" id="tourCard" style="border-color: #eee;">
+                <div class="rainbow-glow"></div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-black text-white italic uppercase">Nova Grand Cup</h3>
+                        <div class="bar-container"><div class="bar-fill"></div></div>
+                        <p class="text-[9px] text-gray-400 font-bold uppercase">Slots: 35/50 • Map: Purgatory</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-3xl font-black text-yellow-500 italic">500 NC</p>
+                        <button class="mt-3 bg-yellow-500 text-black px-6 py-2.5 rounded-xl font-black text-[9px] uppercase">Join Match</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="market-box">
+            <div id="idsContainer" class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="id-card" onclick="window.location.href='iteminfo.html?id=001'">
+                    <div class="h-40 bg-gray-100 relative">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_E-zVv_W5n4L25Gg7p68jY9X8N_0zD_Y_8A&s" class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black text-[8px] text-white px-2 py-1 rounded-lg font-black">LVL 75</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-black italic uppercase text-xs">Sakura Rare S1</h3>
+                        <p class="text-lg font-black text-yellow-500 italic mt-2">1200 NC</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <audio id="phonk" loop autoplay><source src="Phonk-32.mp4" type="audio/mp4"></audio>
+
+    <script>
+        let audioCtx, analyser, dataArray;
+        const audio = document.getElementById('phonk');
+
+        function startExperience() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                const source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser); analyser.connect(audioCtx.destination);
+                analyser.fftSize = 64;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                animateSpectrum();
+            }
+            audio.play();
+            document.getElementById('speakerIcon').style.opacity = "1";
+        }
+
+        function animateSpectrum() {
+            requestAnimationFrame(animateSpectrum);
+            analyser.getByteFrequencyData(dataArray);
+            const canvas = document.getElementById('spectrum-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            
+            const bass = dataArray[2];
+            
+            // RAINBOW BASS PARTICLES LOGIC
+            const hue = (Date.now() / 10) % 360; 
+            document.querySelectorAll('.elite-card').forEach(card => {
+                const glow = card.querySelector('.rainbow-glow');
+                if (bass > 200) {
+                    card.style.transform = `scale(${1 + bass/1500})`;
+                    glow.style.opacity = bass / 255;
+                    glow.style.color = `hsl(${hue}, 100%, 50%)`;
+                } else {
+                    card.style.transform = `scale(1)`;
+                    glow.style.opacity = "0";
+                }
+            });
+
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            let x = 0;
+            const barWidth = (canvas.width / dataArray.length) * 2.5;
+            for(let i=0; i<dataArray.length; i++) {
+                const h = dataArray[i] * 2.5;
+                ctx.fillStyle = `hsla(${(i*15 + hue)%360}, 100%, 50%, ${h/600})`;
+                ctx.fillRect(x, canvas.height - h, barWidth, h);
+                x += barWidth + 4;
+            }
+        }
+
+        document.getElementById('speakerBtn').onclick = (e) => {
+            e.stopPropagation();
+            if (audio.paused) { audio.play(); document.getElementById('speakerIcon').style.opacity = "1"; }
+            else { audio.pause(); document.getElementById('speakerIcon').style.opacity = "0.4"; }
+        };
+
+        function filterType(t, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('lottery-box').style.display = (t==='all' || t==='1nc') ? 'block' : 'none';
+            document.getElementById('tourney-box').style.display = (t==='all' || t==='tourney') ? 'block' : 'none';
+            document.getElementById('market-box').style.display = (t==='all') ? 'block' : 'none';
+        }
+
+        window.onload = () => {
+            const user = JSON.parse(localStorage.getItem('nova_user'));
+            if(user) {
+                document.getElementById('bal').innerText = user.nc || "0.00";
+                document.getElementById('pfp').innerText = user.username[0].toUpperCase();
+            }
+        };
+    </script>
+</body>
+</html>

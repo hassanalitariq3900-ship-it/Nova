@@ -1,0 +1,56 @@
+:root {
+    --nova-gold: #facc15;
+    --nova-bg: #0b0f1a;
+    --nova-card: #161d2f;
+    --nova-accent: #3b82f6;
+}
+
+body {
+    background-color: var(--nova-bg);
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* Glassmorphism Effect for Navbar */
+.nav-glass {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+/* Custom Card Hover Animation */
+.ff-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ff-card:hover {
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
+}
+
+/* NC Coin Rotation Animation */
+@keyframes rotateCoin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+.coin-anim {
+    animation: rotateCoin 3s infinite linear;
+}
+
+/* Success/Hold Status Colors */
+.status-held { color: #f59e0b; font-weight: bold; }
+.status-released { color: #10b981; font-weight: bold; }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-grid { grid-template-columns: 1fr; }
+}
+#userAvatar {
+    box-shadow: 0 0 10px rgba(250, 204, 21, 0.1);
+    transition: 0.3s;
+}
+
+.group:hover #userAvatar {
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+    transform: scale(1.05);
+}

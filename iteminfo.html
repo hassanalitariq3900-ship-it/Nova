@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details | Nova Elite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        
+        body { background: #f9fafb; color: #111; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* PREMIUM BLUR HEADER */
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+        
+        /* PHOTO GALLERY STYLE */
+        .main-img-box { border-radius: 40px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); border: 8px solid white; }
+        .thumb { width: 80px; height: 80px; border-radius: 20px;  cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+        .thumb.active { border-color: #facc15; transform: scale(1.1); }
+
+        /* TECH SPECS CARDS */
+        .spec-card { background: white; padding: 20px; border-radius: 28px; border: 1px solid #f0f0f0; transition: 0.3s; }
+        .spec-card:hover { border-color: #facc15; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+        /* EVO PROGRESS BAR */
+        .evo-bar-bg { background: #f0f0f0; height: 8px; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .evo-bar-fill { background: linear-gradient(90deg, #facc15, #fb923c); height: 100%; border-radius: 10px; }
+
+        /* BUY BUTTON ANIMATION */
+        .buy-now-btn {
+            background: #000; color: #fff; width: 100%; padding: 24px; border-radius: 28px;
+            font-family: 'Orbitron'; font-size: 18px; transition: 0.4s;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .buy-now-btn:hover { background: #facc15; color: #000; transform: scale(1.02); }
+
+        .rare-tag { background: #fef9c3; color: #854d0e; padding: 4px 12px; border-radius: 10px; font-size: 10px; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+    <nav class="glass-nav p-5 flex justify-between items-center">
+        <button onclick="history.back()" class="bg-gray-100 p-3 rounded-2xl hover:bg-black hover:text-white transition-all">
+            <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" class="w-4 rotate-180">
+        </button>
+        <h1 style="font-family: 'Orbitron';" class="text-xl font-black italic uppercase tracking-tighter">Product<span class="text-yellow-500">Info</span></h1>
+        <div class="w-10"></div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 md:p-12 lg:flex gap-16">
+        
+        <div class="lg:w-1/2 space-y-8">
+            <div class="main-img-box relative">
+                <img id="displayImg" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_E-zVv_W5n4L25Gg7p68jY9X8N_0zD_Y_8A&s" class="w-full h-[500px] object-cover">
+                <div class="absolute top-6 left-6 rare-tag shadow-xl">PREMIUM ID</div>
+            </div>
+
+            <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                <img onclick="changeImg(this.src)" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_E-zVv_W5n4L25Gg7p68jY9X8N_0zD_Y_8A&s" class="thumb active">
+                <img onclick="changeImg(this.src)" src="https://i.ytimg.com/vi/qY_B6H-9Lsw/maxresdefault.jpg" class="thumb">
+                <div class="thumb bg-black flex items-center justify-center relative group">
+                    <img src="https://cdn-icons-png.flaticon.com/512/727/727245.png" class="w-6 invert opacity-50 group-hover:opacity-100 transition-all">
+                    <p class="absolute bottom-1 text-[8px] text-white font-bold uppercase">Video</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[35px] border border-gray-100">
+                <h4 class="font-black text-lg mb-4 italic uppercase">Seller Description</h4>
+                <p id="fullDesc" class="text-gray-500 text-sm leading-relaxed">
+                    This account is a masterpiece for collectors. It features the 1st Season Sakura set, 
+                    Blue Flame Draco (Max), and Megalodon Alpha (Max). The UID is short and elite, 
+                    perfect for players who want to stand out in the lobby.
+                </p>
+            </div>
+        </div>
+
+        <div class="lg:w-1/2 mt-10 lg:mt-0 flex flex-col justify-between">
+            <div>
+                <h2 id="idTitle" class="text-5xl font-black italic uppercase leading-tight mb-2">Sakura Season 1</h2>
+                <p class="text-gray-400 font-bold text-xs tracking-widest uppercase mb-10">UID Status: <span id="uidStatus" class="text-green-500">V-Badge Verified</span></p>
+
+                <div class="grid grid-cols-2 gap-4 mb-10">
+                    <div class="spec-card">
+                        <p class="text-[9px] text-gray-400 font-black uppercase">Account Level</p>
+                        <h5 id="idLvl" class="text-2xl font-black italic">75</h5>
+                        <div class="evo-bar-bg"><div class="evo-bar-fill" style="width: 75%;"></div></div>
+                    </div>
+                    <div class="spec-card">
+                        <p class="text-[9px] text-gray-400 font-black uppercase">Evo Guns Max</p>
+                        <h5 id="idEvo" class="text-2xl font-black italic">07</h5>
+                        <div class="evo-bar-bg"><div class="evo-bar-fill" style="width: 90%; background: #000;"></div></div>
+                    </div>
+                    <div class="spec-card">
+                        <p class="text-[9px] text-gray-400 font-black uppercase">Rare Bundles</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="rare-tag">Sakura</span>
+                            <span class="rare-tag">HipHop</span>
+                            <span class="rare-tag">Arctic Blue</span>
+                        </div>
+                    </div>
+                    <div class="spec-card">
+                        <p class="text-[9px] text-gray-400 font-black uppercase">Regional Rank</p>
+                        <h5 class="text-2xl font-black italic text-orange-500">Top 1%</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[40px] border-2 border-gray-50 shadow-xl">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Price</p>
+                        <h3 class="text-5xl font-black text-yellow-500 italic"><span id="idPrice">1200</span> <span class="text-2xl">NC</span></h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] font-bold text-green-500 uppercase flex items-center gap-1">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span> Instant Transfer
+                        </p>
+                    </div>
+                </div>
+
+                <button class="buy-now-btn" onclick="processPurchase()">
+                    PURCHASE ACCOUNT
+                </button>
+                <p class="text-center text-[9px] text-gray-400 mt-4 font-bold uppercase">Safe Transaction Secured by Nova Systems</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Automatic Data Loading from URL
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if(params.get('title')) document.getElementById('idTitle').innerText = params.get('title');
+            if(params.get('lvl')) {
+                document.getElementById('idLvl').innerText = params.get('lvl');
+            }
+            if(params.get('price')) document.getElementById('idPrice').innerText = params.get('price');
+            if(params.get('img')) document.getElementById('displayImg').src = params.get('img');
+        }
+
+        // Image Gallery Switcher
+        function changeImg(src) {
+            document.getElementById('displayImg').src = src;
+            // Update active state
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function processPurchase() {
+            alert("Redirecting to secure payment... Make sure you have enough NC!");
+        }
+    </script>
+</body>
+</html>

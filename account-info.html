@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | Nova Elite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        
+        body { background: #f8f9fc; color: #1a1a1a; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card { background: white; border-radius: 35px; border: 1px solid #eee; box-shadow: 0 20px 40px rgba(0,0,0,0.03); }
+        
+        input { background: #f3f4f6; border: 1px solid transparent; padding: 15px; border-radius: 20px; width: 100%; font-size: 14px; outline: none; transition: 0.3s; font-weight: 600; }
+        input:focus { border-color: #facc15; background: #fff; box-shadow: 0 0 20px rgba(250, 204, 21, 0.15); }
+
+        .stat-badge { background: #fdfdfd; border: 1px solid #f0f0f0; padding: 20px; border-radius: 25px; text-align: center; }
+        .btn-save { background: #000; color: #fff; padding: 20px; border-radius: 25px; width: 100%; font-family: 'Orbitron'; font-size: 14px; transition: 0.4s; cursor: pointer; border: none; }
+        .btn-save:hover { background: #facc15; color: #000; transform: translateY(-3px); }
+        
+        .edit-icon-btn { position: absolute; bottom: 0; right: 0; background: #facc15; padding: 8px; border-radius: 12px; border: 4px solid #fff; cursor: pointer; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="window.location.href='index.html'" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:bg-black hover:invert transition-all">
+                <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" class="w-4 rotate-180">
+            </button>
+            <h1 style="font-family: 'Orbitron';" class="text-xl font-black italic">USER<span class="text-yellow-500">CENTRE</span></h1>
+            <div class="w-12"></div>
+        </div>
+
+        <div class="glass-card p-8 mb-6">
+            <div class="flex flex-col items-center">
+                <div class="relative mb-4">
+                    <div id="bigPfp" class="w-28 h-28 bg-black text-white rounded-[40px] flex items-center justify-center text-5xl font-black shadow-2xl border-4 border-yellow-500/10">N</div>
+                    <div class="edit-icon-btn" onclick="document.getElementById('settings-section').scrollIntoView({behavior: 'smooth'})">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="w-4">
+                    </div>
+                </div>
+                <h2 id="userNameTitle" class="text-3xl font-black italic uppercase text-center">Loading...</h2>
+                <p id="userPhoneDisplay" class="text-gray-400 font-bold text-xs mt-1">+92 0000000000</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mt-10">
+                <div class="stat-badge">
+                    <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Balance</p>
+                    <p class="text-lg font-black text-yellow-500 italic"><span id="uNC">0.00</span> NC</p>
+                </div>
+                <div class="stat-badge">
+                    <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Bought</p>
+                    <p class="text-lg font-black text-blue-600 italic">0 ID</p>
+                </div>
+                <div class="stat-badge">
+                    <p class="text-[9px] font-black text-gray-400 uppercase mb-1">Strikes</p>
+                    <p class="text-lg font-black text-red-500 italic"><span id="uStrikes">0</span>/3</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-section" class="glass-card p-8">
+            <h3 class="font-black italic uppercase text-sm mb-8 border-b pb-4 flex items-center gap-2">
+                <img src="https://cdn-icons-png.flaticon.com/512/2040/2040504.png" class="w-4">
+                Update Settings
+            </h3>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Account Name</label>
+                    <input type="text" id="editName">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase ml-1">WhatsApp Number</label>
+                    <input type="number" id="editPhone">
+                </div>
+
+                <div class="pt-4 border-t border-dashed">
+                    <label class="text-[10px] font-black text-red-500 uppercase ml-1">Confirm Current Password</label>
+                    <input type="password" id="oldPassVerify" placeholder="Verify identity to save">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase ml-1">New Password (Optional)</label>
+                    <input type="password" id="editNewPass" placeholder="Leave blank to keep same">
+                </div>
+
+                <button onclick="saveFullSettings()" id="saveBtn" class="btn-save uppercase tracking-widest">
+                    Sync Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxEOe_oknQMbLTZOA7WF1WGPHE8Kn1l7xOudwF8wNX2eTbBl5nR0W6qF9wBnIhrrDED/exec";
+        let user = JSON.parse(localStorage.getItem('nova_user'));
+
+        window.onload = function() {
+            if(!user) { window.location.href = 'login.html'; return; }
+            refreshUI();
+        }
+
+        function refreshUI() {
+            document.getElementById('userNameTitle').innerText = user.username;
+            document.getElementById('userPhoneDisplay').innerText = "+" + user.whatsapp;
+            document.getElementById('bigPfp').innerText = user.username[0].toUpperCase();
+            document.getElementById('uNC').innerText = user.nc || "0.00";
+            document.getElementById('uStrikes').innerText = user.strikes || "0";
+            document.getElementById('editName').value = user.username;
+            document.getElementById('editPhone').value = user.whatsapp;
+        }
+
+        async function saveFullSettings() {
+            const btn = document.getElementById('saveBtn');
+            const verifyPass = document.getElementById('oldPassVerify').value;
+            const newName = document.getElementById('editName').value.trim();
+            const newPhone = document.getElementById('editPhone').value.trim();
+            const newPass = document.getElementById('editNewPass').value.trim();
+
+            if (verifyPass !== user.password) {
+                alert("❌ Verification Failed: Password incorrect!");
+                return;
+            }
+
+            if (!newName || !newPhone) {
+                alert("Please fill all required fields.");
+                return;
+            }
+
+            btn.innerText = "SYNCING WITH CLOUD...";
+            btn.disabled = true;
+
+            const updateData = {
+                old_whatsapp: user.whatsapp, 
+                whatsapp: newPhone,
+                username: newName,
+                password: newPass || user.password
+            };
+
+            try {
+                // 1. Send Update to Google Sheet
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(updateData)
+                });
+
+                // 2. Refresh Local Data from Sheet (Taake NC/Strikes update rahein)
+                const res = await fetch(API_URL);
+                const users = await res.json();
+                const updatedUser = users.find(u => String(u.whatsapp) === String(newPhone));
+
+                if(updatedUser) {
+                    localStorage.setItem('nova_user', JSON.stringify(updatedUser));
+                    user = updatedUser;
+                    alert("✅ Success: Profile Updated!");
+                    location.reload();
+                } else {
+                    // Fallback agar turant fetch na ho
+                    user.username = newName;
+                    user.whatsapp = newPhone;
+                    user.password = updateData.password;
+                    localStorage.setItem('nova_user', JSON.stringify(user));
+                    location.reload();
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Connection Error. Please try again.");
+                btn.innerText = "Sync Changes";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
